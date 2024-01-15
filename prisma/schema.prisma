@@ -1,0 +1,47 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Status {
+    active
+    inactive
+}
+
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String
+  email    String   @unique
+  password String
+  avatar String 
+  status Status @default(active)
+  quizzes  Quiz[]
+}
+
+model Quiz {
+  id       Int      @id @default(autoincrement())
+  title    String
+  questions Question[]
+  users    User[]
+}
+
+model Question {
+  id      Int      @id @default(autoincrement())
+  content String
+  answers Answer[]
+  quiz    Quiz     @relation(fields: [quizId], references: [id])
+  quizId  Int
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  content    String
+  isCorrect  Boolean
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId Int
+}
